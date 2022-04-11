@@ -1,38 +1,46 @@
-.App {
-  text-align: center;
+body{ 
+    margin: 0; 
+    padding: 0; 
+    width: 100%; 
+    height: 100%;
+    overflow: hidden;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.splitWrapper{
+    height: 100vh;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.splitHorizontal{ 
+    display: flex; 
+    flex-direction: row; 
+    height: 100vh; 
 }
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.splitVertical {  
+    display: flex; 
+    flex-direction: column;  
 }
-
-.App-link {
-  color: #61dafb;
+.gutter {
+    background-color: rgb(49, 49, 46);
+    background-repeat: no-repeat;
+    background-position: 50%;
 }
+.gutter.gutter-horizontal {
+    cursor: col-resize;
+}
+.gutter.gutter-vertical {
+    cursor: row-resize;
+}
+.leftPanel{
+    overflow:scroll;
+}
+.leftPanel img{
+    position: relative; top:0; left: 0;
+    max-width: 100%;
+    width: 1400px;
+}/*기본 width를 크게 설정해놓고 max-width를 100%로 하면 화면 사이즈에 맞게 조정, 최대 크기는 1400*/
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+#solution{
+    overflow:scroll;
+}
+#result{
+    overflow:scroll;
 }
