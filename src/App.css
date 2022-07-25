@@ -52,6 +52,7 @@ body{
 #lineCounter{
     padding-top: 15px;
     padding-left: 15px;
+    overflow: hidden;
     width: 30px;
     height:95%;
     border: none;
