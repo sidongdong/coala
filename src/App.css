@@ -44,3 +44,18 @@ body{
 #result{
     overflow:scroll;
 }
+.editor{
+    overflow-y: auto;
+    display: flex;
+    background-color: black;
+}
+#lineCounter{
+    padding-top: 15px;
+    padding-left: 15px;
+    width: 30px;
+    height:95%;
+    border: none;
+    resize: none;
+    outline: none;
+    color:rgb(163, 163, 163)
+} 
