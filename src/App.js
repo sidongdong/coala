@@ -22,7 +22,7 @@ function App() {
   const [language,setLan] = useState("cpp");
   const [inputNeed,setInput] = useState("cin>>")
   const[lineNumber,setLineNum]=useState('1.\n2.\n3.\n4.\n5.\n6.');
-  const[read,setRead] = useState(false);
+  const[read,setRead] = useState(true);
 
 
   const onLanguageChange = () => {
