@@ -243,7 +243,7 @@ function App() {
                       backgroundColor: "black",
                       fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
                       fontSize: editorFontSize,
-                      width: editorFontSize*1.5,
+                      width: editorFontSize*1.8,
                     }}>1.</textarea>
                 </div>
                 <div className="w-tc-editor-var" > </div>

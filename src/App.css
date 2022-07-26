@@ -39,10 +39,10 @@ body{
 }/*기본 width를 크게 설정해놓고 max-width를 100%로 하면 화면 사이즈에 맞게 조정, 최대 크기는 1400*/
 
 #solution{
-    overflow:scroll;
+    overflow-x: auto;
 }
 #result{
-    overflow:scroll;
+    overflow:auto;
 }
 .editor{
     overflow-y: auto;
@@ -53,8 +53,7 @@ body{
     padding-top: 15px;
     padding-left: 15px;
     overflow: hidden;
-    width: 30px;
-    height:95%;
+    height: 95%;
     border: none;
     resize: none;
     outline: none;
