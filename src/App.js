@@ -71,7 +71,7 @@ function App() {
     } else {
       let solutiontext;
       solutiontext=$('#solution').val();
-      let input;
+      let input = null;
       if(solutiontext.includes(inputNeed)){
         input = $('#result').val();
         setRead(false);
@@ -101,6 +101,9 @@ function App() {
         else{
           solutiontext = Base64.decode(data.stdout);
         };
+        if (input!==null){
+          solutiontext = input+"\n"+solutiontext;
+        }
         $('#result').val(solutiontext);
       });
     }
