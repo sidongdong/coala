@@ -20,7 +20,10 @@ function App() {
   const[wholeText,setText]=useState(writingDafault);
   const [editorFontSize, setFontSize] = useState( 14 );
   const [language,setLan] = useState("cpp");
+  const [inputNeed,setInput] = useState("cin>>")
   const[lineNumber,setLineNum]=useState('1.\n2.\n3.\n4.\n5.\n6.');
+  const[read,setRead] = useState(false);
+
 
   const onLanguageChange = () => {
     languageSelected = $('#languageSelectSet').val(); //select에서 선택된 value
@@ -29,21 +32,25 @@ function App() {
       setLanNum("54");
       writingDafault="#include<iostream>\nusing namespace std;\nint main(){\n    cout<<\"Hello, World!\";\n    return 0;\n}";
       setLan("cpp");
+      setInput("cin>>");
     }
     else if(languageSelected==="C"){
       setLanNum("50");
       writingDafault="#include<stdio.h>\nint main(){\n    printf(\"Hello, World!\");\n    return 0;\n}";
       setLan("c");
+      setInput("scanf(");
     }
     else if(languageSelected==="Python"){
       setLanNum("71");
       writingDafault="print(\"Hello, World!\")";
       setLan("py");
+      setInput("input(");
     }
     else if(languageSelected==="Java"){
       setLanNum("62");
       writingDafault="class Main {\n    public static void main(String args[]) {\n      System.out.println(\"Hello, World!\");\n    }\n}";
       setLan("java");
+      setInput("Scanner");
     }
     setCode(writingDafault);
     setText(writingDafault);
@@ -57,12 +64,18 @@ function App() {
   
   const mounted = useRef(false);
 
+
   useEffect(() => {
     if(!mounted.current){
       mounted.current = true; //count값이 마운트 될 때는 제외, 업데이트 시에만 렌더링
     } else {
       let solutiontext;
       solutiontext=$('#solution').val();
+      let input;
+      if(solutiontext.includes(inputNeed)){
+        input = $('#result').val();
+        setRead(false);
+      }
       fetch('http://dev-compile.coala.services:2358/submissions/?base64_encoded=true&wait=true', {
         method: "POST",
         headers: {
@@ -72,9 +85,11 @@ function App() {
         body: JSON.stringify({
           source_code: Base64.encode(solutiontext),
           language_id: languageId,
+          stdin: Base64.encode(input),
         }),
       }).then((response) => response.json())
       .then((data) => {
+        setRead(true);
         if(data.stdout===null){
           if(data.stderr===null){
             solutiontext = Base64.decode(data.compile_output);
@@ -91,8 +106,13 @@ function App() {
     }
   }, [count]);
 
-  const onclick = ()=>{
+  const onCompileClick = ()=>{
     setCount(count+1);
+  };
+
+  const onInputClick = () =>{
+    document.getElementById("result").value="";
+    setRead(false);
   };
 
   const onFontUp=()=>{
@@ -124,7 +144,6 @@ function App() {
     var afterText=wholeText.substring(selectPos,wholeText.length);
     const close=e.key;
     setOpenState(0);
-    
 
     if(close==="["){
       closeBracket="[]";
@@ -192,7 +211,8 @@ function App() {
             </option>
           ))}
         </select>
-        <button onClick={onclick}>컴파일{count}</button>
+        <button onClick={onInputClick}>입력하기</button>
+        <button onClick={onCompileClick}>컴파일{count}</button>
         <button>제출하기</button>
         <button onClick={onFontUp}>+</button>
         <button onClick={onFontDown}>-</button>
@@ -220,8 +240,10 @@ function App() {
                       backgroundColor: "black",
                       fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
                       fontSize: editorFontSize,
+                      width: editorFontSize*1.5,
                     }}>1.</textarea>
                 </div>
+                <div className="w-tc-editor-var" > </div>
                 <div className='codeEditor' >
                   <CodeEditor
                     id="solution"
@@ -241,7 +263,7 @@ function App() {
                 />
                 </div>
               </div>
-              <textarea readOnly="readonly" id="result" placeholder="컴파일" style={{padding : 10}}  defaultValue={""}/>
+              <textarea readOnly={read} id="result" placeholder="컴파일" style={{padding : 15, fontSize: editorFontSize,}}  defaultValue={""}/>
             </Split>
           </Split>
         </div>
