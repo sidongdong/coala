@@ -5,6 +5,10 @@ body{
     height: 100%;
     overflow: hidden;
 }
+#loginEnter{
+    text-align: center;
+    padding-top: 10%;
+}
 
 .splitWrapper{
     height: 100vh;
