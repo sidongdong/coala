@@ -1,15 +1,15 @@
 import './App.css';
 import React, { useRef } from 'react';
-import { useState, useEffect} from "react";
+import { useState, useEffect, createContext} from "react";
 import $ from 'jquery';
 import {Base64} from 'js-base64';
 import Split from 'react-split'
 import CodeEditor from '@uiw/react-textarea-code-editor';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
+var user_Id;
+var teacher_Id;
 
-let teacherId="";
-let userId=""
 //로그인 element
 function Login(){
   const [loginInfo,setLogin] = useState({
@@ -29,6 +29,7 @@ function Login(){
 
   function loginClick(){
     const url='http://dev-api.coala.services:8000/student-login-check/'+userId+'/'+userPw
+    user_Id=userId;
     fetch(url, {
                 method: 'Get',
               })
@@ -53,8 +54,9 @@ function Login(){
 
 
   function onEnterClick(){
-    teacherId=document.getElementById("teacherSelectSet").value
+    const teacherId=document.getElementById("teacherSelectSet").value;
     const url="http://dev-api.coala.services:8000/student-redis-Login?teacher_id="+teacherId+"&student_id="+userId
+    teacher_Id=teacherId;
     fetch(url, {
         method: 'Get',
       })
@@ -68,7 +70,7 @@ function Login(){
         }     
       })
   }
- 
+
   return(
     <div 
       id="loginEnter" 
@@ -363,10 +365,10 @@ function Home(){
           submittext=submittext.replace(/\{/gi,'@OpenMiddle@');
           submittext=submittext.replace(/\}/gi,'@CloseMiddle@');
           submittext=submittext.replace(/\,/gi,'@Comma@');
-          console.log(submittext);
-          console.log(problemNum);
-          let teacher_id=teacherId;//선생님 아이디
-          let student_id=userId;//학생 아이디
+          console.log(teacher_Id);
+          console.log(user_Id);
+          let teacher_id=teacher_Id;//선생님 아이디
+          let student_id=user_Id;//학생 아이디
           let problem_num=problemNum;
           fetch('http://dev-api.coala.services:8000/websubmission?teacher_id='+teacher_id+'&student_id='+student_id+'&problem_num='+problem_num+'&compile_count='+count+'&code='+submittext)
             .then((response) => response.json())
