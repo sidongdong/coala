@@ -5,28 +5,60 @@ body{
     height: 100%;
     overflow: hidden;
 }
+
+header{
+    text-align: center;
+    color: rgb(128, 126, 126);
+    font-size: 8px;
+    padding-top: 0.5%;
+}
+
+select option[value=""][disabled] {
+	display: none;
+}
+
+
+#wholeScreen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255,255,255,1);
+    overflow: hidden;
+    --web-scale-on-resize: true;
+    --web-enable-deep-linking: true;
+}
+
+#webCompiler {
+    background-color: rgb(228, 228, 228);
+    overflow: visible;
+}
 #loginEnter{
     text-align: center;
     padding-top: 10%;
 }
 
+
 .splitWrapper{
-    height: 100vh;
+    padding-left: 0.5%;
+    padding-right: 0.5%;
+    padding-top: 0.5%;
 }
 .splitHorizontal{ 
     display: flex; 
     flex-direction: row; 
-    height: 100vh; 
+    max-height: 85%;
+    background-color: rgb(228, 228, 228);
 }
 .splitVertical {  
     display: flex; 
     flex-direction: column;  
+    background-color: black;
 }
 .gutter {
-    background-color: rgb(49, 49, 46);
     background-repeat: no-repeat;
     background-position: 50%;
 }
+
 .gutter.gutter-horizontal {
     cursor: col-resize;
 }
@@ -34,24 +66,117 @@ body{
     cursor: row-resize;
 }
 .leftPanel{
-    overflow:scroll;
+    overflow: auto;
+    background-color: rgba(255,255,255,1);
 }
+
+.leftPanel::-webkit-scrollbar {
+    width: 18px;  /* 스크롤바의 너비 */
+}
+
+.leftPanel::-webkit-scrollbar-thumb {
+    height: 10%; /* 스크롤바의 길이 */
+    background: #bdbbbb; /* 스크롤바의 색상 */
+    border-radius: 10px;
+    background-clip: padding-box;
+    border: 4px solid transparent;
+    
+}
+
+.leftPanel::-webkit-scrollbar-track {
+    background: rgb(228, 228, 228);  /*스크롤바 뒷 배경 색상*/
+    padding-left: 5px;
+}
+
 .leftPanel img{
     position: relative; top:0; left: 0;
     max-width: 100%;
     width: 1400px;
 }/*기본 width를 크게 설정해놓고 max-width를 100%로 하면 화면 사이즈에 맞게 조정, 최대 크기는 1400*/
 
-#solution{
+
+#question{
+    padding-left: 0.2%;
+    overflow-y: auto;
     overflow-x: auto;
 }
+
+.codeEditor{
+    border-radius: 10px;
+}
+
+#solution{
+    border-radius: 10px;
+}
+
+.editor::-webkit-scrollbar {
+    width: 18px;  /* 스크롤바의 너비 */
+}
+
+.editor::-webkit-scrollbar-thumb {
+    height: 10%; /* 스크롤바의 길이 */
+    background: rgb(71, 70, 70); /* 스크롤바의 색상 */
+    border-radius: 10px;
+    background-clip: padding-box;
+    border: 4px solid transparent;
+    
+}
+
+.editor::-webkit-scrollbar-track {
+    padding-left: 5px;
+}
+
+#solution::-webkit-scrollbar {
+    width: 18px;  /* 스크롤바의 너비 */
+}
+
+#solution::-webkit-scrollbar-thumb {
+    height: 10%; /* 스크롤바의 길이 */
+    background: rgb(71, 70, 70); /* 스크롤바의 색상 */
+    border-radius: 10px;
+    background-clip: padding-box;
+    border: 4px solid transparent;
+    
+}
+
+#solution::-webkit-scrollbar-track {
+    padding-left: 5px;
+}
+
+
 #result{
     overflow:auto;
+    border-radius: 10px;
+    margin: 10px;
+    background-color: rgb(71, 70, 70);
+    color: white;
 }
+
+#result::-webkit-scrollbar {
+    width: 18px;  /* 스크롤바의 너비 */
+}
+
+#result::-webkit-scrollbar-thumb {
+    height: 10%; /* 스크롤바의 길이 */
+    background: #bdbbbb; /* 스크롤바의 색상 */
+    border-radius: 10px;
+    background-clip: padding-box;
+    border: 4px solid transparent;
+    
+}
+
+#result::-webkit-scrollbar-track {
+    background: rgb(71, 70, 70);  /*스크롤바 뒷 배경 색상*/
+    padding-left: 5px;
+}
+
+
 .editor{
     overflow-y: auto;
     display: flex;
     background-color: black;
+    z-index: 1;
+    border-radius: 10px;
 }
 #lineCounter{
     padding-top: 15px;
@@ -61,5 +186,25 @@ body{
     border: none;
     resize: none;
     outline: none;
-    color:rgb(163, 163, 163)
+    color:rgb(163, 163, 163);
+    border-radius: 10px;
 } 
+
+#fontUp{
+    position: fixed;
+    border: white;
+    top:98px;
+    left: 1493px;
+    z-index: 2;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+#fontDown{
+    position: fixed;
+    border: white;
+    top:114.5px;
+    left: 1493px;
+    z-index: 2;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
