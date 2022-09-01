@@ -360,7 +360,6 @@ function Home(){
         <div 
           id="webCompiler" 
           className="App"
-          style={{height: 640}}
         >
           <script src="https://cdnjs.cloudflare.com/ajax/libs/split.js/1.6.0/split.min.js"> </script>
           <script src="/socket.io/socket.io.js"></script>
@@ -398,16 +397,16 @@ function Home(){
                     </option>
                   ))}
                 </select>
-                <button id='fontUp' onClick={onFontUp} style={{width:15, height:15, marginRight:5, marginTop:6.5, backgroundColor:'rgb(71, 70, 70)', color:'white', border:"white"}}>^</button>
-                <button id='fontDown' onClick={onFontDown} style={{width:15 , height:17, marginRight:5, marginTop:6.5,backgroundColor:'rgb(71, 70, 70)', color:'white', border:"white"}}>v</button>
+                <button id='fontUp' onClick={onFontUp} style={{width:15, height:15, marginRight:5, marginTop:6.5, backgroundColor:'rgb(71, 70, 70)', color:'white', }}>^</button>
+                <button id='fontDown' onClick={onFontDown} style={{width:15 , height:17, marginRight:5, marginTop:6.5,backgroundColor:'rgb(71, 70, 70)', color:'white',}}>v</button>
             </div>
               
-            <div id="splitWrapper" className="splitWrapper" style={{height: 680,}}>
+            <div id="splitWrapper" className="splitWrapper">
               <Split
                 className="splitHorizontal"
                 sizes={[45, 55]}
               >
-                <div className="leftPanel" id="question" style={{height: 580}}>
+                <div className="leftPanel" id="question">
                   {
                     problemUrl.map(i=><img key={i} src={i} alt="profile"/>)
                   }
@@ -418,7 +417,7 @@ function Home(){
                   direction= 'vertical'
                   style={{borderRadius:10}}
                 >
-                  <div className='editor' style={{height: 580,}}>
+                  <div className='editor'>
                     <div>
                       <textarea 
                         id="lineCounter"  
