@@ -195,14 +195,14 @@ select option[value=""][disabled] {
     position: relative;
     left: calc(100vw - 420px);
     top: 45px;
-    z-index: 2;
+    z-index: 3;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 }
 #fontDown{
     position: relative;
-    left: calc(100vw - 441px);
-    top: 60px;
+    left: calc(100vw - 446px);
+    top: 57px;
     z-index: 2;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;

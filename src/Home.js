@@ -397,8 +397,8 @@ function Home(){
                     </option>
                   ))}
                 </select>
-                <button id='fontUp' onClick={onFontUp} style={{width:15, height:15, marginRight:5, marginTop:6.5, backgroundColor:'rgb(71, 70, 70)', color:'white', }}>^</button>
-                <button id='fontDown' onClick={onFontDown} style={{width:15 , height:17, marginRight:5, marginTop:6.5,backgroundColor:'rgb(71, 70, 70)', color:'white',}}>v</button>
+                <button id='fontUp' onClick={onFontUp} style={{width:21, height:17, marginRight:5, marginTop:6.5, backgroundColor:'rgb(71, 70, 70)', color:'white', }}>^</button>
+                <button id='fontDown' onClick={onFontDown} style={{width:21 , height:21, marginRight:5, marginTop:6.5,backgroundColor:'rgb(71, 70, 70)', color:'white',}}>v</button>
             </div>
               
             <div id="splitWrapper" className="splitWrapper">
