@@ -177,6 +177,7 @@ select option[value=""][disabled] {
     display: flex;
     background-color: black;
     border-radius: 10px;
+    height: 100%;
 }
 #lineCounter{
     padding-top: 15px;
