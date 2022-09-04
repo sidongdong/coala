@@ -101,10 +101,12 @@ select option[value=""][disabled] {
 }
 
 .codeEditor{
+    z-index: 1;
     border-radius: 10px;
 }
 
 #solution{
+    z-index: 1;
     border-radius: 10px;
 }
 
@@ -174,7 +176,6 @@ select option[value=""][disabled] {
     overflow-y: auto;
     display: flex;
     background-color: black;
-    z-index: 1;
     border-radius: 10px;
 }
 #lineCounter{
@@ -189,20 +190,19 @@ select option[value=""][disabled] {
     border-radius: 10px;
 } 
 
+
 #fontUp{
-    position: absolute;
-    border: white;
-    top: 14vh;
-    left:198vh; 
+    position: relative;
+    left: calc(100vw - 420px);
+    top: 45px;
     z-index: 2;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 }
 #fontDown{
-    position: absolute;
-    border: white;
-    top: 16.5vh;
-    left:198vh; 
+    position: relative;
+    left: calc(100vw - 441px);
+    top: 60px;
     z-index: 2;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
