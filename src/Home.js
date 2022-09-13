@@ -32,6 +32,7 @@ function Home(){
     const[lineNumber,setLineNum]=useState('1.\n2.\n3.\n4.\n5.\n6.');
     const[read,setRead] = useState(true);
     const[languageImgUrl,setLanImg] = useState("assets/languageLogo/cpp_logo.png")
+    const date = new Date();
   
   
     const onLanguageChange = () => {
@@ -92,10 +93,6 @@ function Home(){
         }
         fetch('http://dev-compile.coala.services:2358/submissions/?base64_encoded=true&wait=true', {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json,text/plain;q=0.9,text/html;q=0.8",
-            "X-Auth-Token": "coalacompilepass"
-          },
           body: JSON.stringify({
             source_code: Base64.encode(solutiontext),
             language_id: languageId,
@@ -148,6 +145,7 @@ function Home(){
 
     const onMyInfoClick = () =>{
       alert(`서비스 준비 중입니다`)
+      console.log(date)
     };
 
     const onSaveClick = () =>{
@@ -191,14 +189,20 @@ function Home(){
       submittext=submittext.replace(/\}/gi,'@CloseMiddle@');
       submittext=submittext.replace(/,/gi,'@Comma@');
       let problem_num=problemNum;
-      fetch('http://dev-api.coala.services:8000/websubmission?teacher_id='+teacherID+'&student_id='+userID+'&problem_num='+problem_num+'&compile_count='+count+'&code='+submittext)
-        .then((response) => response.json())
-        .then((data) => {
-          if(data==='sub_ok')
-          {
-            alert(`제출하였습니다`)
-          }
-        });
+      console.log(teacherID);
+      console.log(userID);
+      console.log(problem_num);
+      console.log(count);
+      console.log(submittext)
+      fetch('http://dev-api.coala.services:8000/websubmission?teacher_id='+teacherID+'&student_id='+userID+'&problem_num='+problem_num+'&compile_count='+count+'&code='+submittext + "&sub_type=n"+ "&sub_time="+date+"&student_memo=",{
+        method: "GET",
+      }).then((response) => response.json())
+      .then((data) => {
+        if(data==='sub_ok')
+        {
+          alert(`제출하였습니다`)
+        }
+      });
     }
   
     const onLogoutClick=()=>{
@@ -235,7 +239,7 @@ function Home(){
     const[openBracket,setOpenState]=useState(0);
     
     //문제 선택
-    let problemNum=5001;
+    const [problemNum,setProblemNum]=useState(5001);
     const selectProbleRangeList = [5000];//[1000,2000,3000,4000,5000,6000,7000,8000,9000,10000,11000,12000,13000]; //문제 번호대 리스트
     const [problemUrl, setProblemUrl] = useState(['https://s3.ap-northeast-2.amazonaws.com/page.thecoala.io/Algorithm/algorithm5/5001.png']); //문제링크
     const [problemNumList,setProblemNumList]=useState([5001,5002,5003,5004,5005,5006,5007,5008,5009,5010,5011,5012,5013,5014,5015,5016,5017,5018,5019,5020,5021,5022,5023,5024,5025,5026,5027,5028,5029,5030,5031,5032,5033])//선택한 번호대 문제리스트
@@ -259,7 +263,7 @@ function Home(){
     }
 
     const onNumSet2Change=(e)=>{
-      let problemNum = Number(e.target.value);
+      setProblemNum(Number(e.target.value));
       problemNum===5012 
       ? setProblemUrl(problemUrl12)
       : problemNumList.map(function(a,i){
