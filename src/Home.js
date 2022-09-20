@@ -17,8 +17,8 @@ function Home(){
     const location = useLocation();
     var teacherID=location.state?.teacherID;
     var userID=location.state?.userID;
-    console.log(teacherID);
-    console.log(userID);
+    //console.log(teacherID);
+    //console.log(userID);
     const selectLanguageNameList = ["C++", "C", "Python", "Java"]; //선택 가능 언어 set
     
     let languageSelected;
@@ -72,10 +72,28 @@ function Home(){
       let input=writingDafault;
       input = input.toString().split("\n").map((line, i) => `${i + 1}.`).join("\n");
       setLineNum(input);//라인 수 세기
-  
+
     }; //select value 값에 따라 languageId와 디폴트값 변경
   
-    
+    const onCompileClick = ()=>{
+      
+      setCount(count+1);
+      //console.log(count)
+      if(count===0){
+        document.getElementById("coala3Display").style.display="none";
+      }
+      else if(count===1){
+        document.getElementById("coala3Display").style.display="none";
+        document.getElementById("coala2Display").style.display="none";
+      }
+      else if(count===2){
+        document.getElementById("coala3Display").style.display="none";
+        document.getElementById("coala2Display").style.display="none";
+        document.getElementById("coala1Display").style.display="none";
+        alert(`다음 컴파일부터는 감점됩니다.`);
+      }
+    };
+
     const mounted = useRef(false);
   
   
@@ -91,8 +109,10 @@ function Home(){
           input = input.substring(15,input.length);
           setRead(false);
         }
-        fetch('http://dev-compile.coala.services:2358/submissions/?base64_encoded=true&wait=true', {
+        //console.log(solutiontext)
+        fetch('http://dev-api.coala.services:8000/data', {
           method: "POST",
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             source_code: Base64.encode(solutiontext),
             language_id: languageId,
@@ -100,7 +120,7 @@ function Home(){
           }),
         }).then((response) => response.json())
         .then((data) => {
-          setRead(true);
+          setRead(true);         
           if(data.stdout===null){
             if(data.stderr===null){
               solutiontext = Base64.decode(data.compile_output);
@@ -120,23 +140,7 @@ function Home(){
       }
     }, [count]);
   
-    const onCompileClick = ()=>{
-      setCount(count+1);
-      //console.log(count)
-      if(count===0){
-        document.getElementById("coala3Display").style.display="none";
-      }
-      else if(count===1){
-        document.getElementById("coala3Display").style.display="none";
-        document.getElementById("coala2Display").style.display="none";
-      }
-      else if(count===2){
-        document.getElementById("coala3Display").style.display="none";
-        document.getElementById("coala2Display").style.display="none";
-        document.getElementById("coala1Display").style.display="none";
-        alert(`다음 컴파일부터는 감점됩니다.`);
-      }
-    };
+
   
     const onInputClick = () =>{
       document.getElementById("result").value="원하는 값을 입력해주세요::"
@@ -145,7 +149,6 @@ function Home(){
 
     const onMyInfoClick = () =>{
       alert(`서비스 준비 중입니다`)
-      console.log(date)
     };
 
     const onSaveClick = () =>{
@@ -189,11 +192,11 @@ function Home(){
       submittext=submittext.replace(/\}/gi,'@CloseMiddle@');
       submittext=submittext.replace(/,/gi,'@Comma@');
       let problem_num=problemNum;
-      console.log(teacherID);
-      console.log(userID);
-      console.log(problem_num);
-      console.log(count);
-      console.log(submittext)
+      //console.log(teacherID);
+      //console.log(userID);
+      //console.log(problem_num);
+      //console.log(count);
+      //console.log(submittext)
       fetch('http://dev-api.coala.services:8000/websubmission?teacher_id='+teacherID+'&student_id='+userID+'&problem_num='+problem_num+'&compile_count='+count+'&code='+submittext + "&sub_type=n"+ "&sub_time="+date+"&student_memo=",{
         method: "GET",
       }).then((response) => response.json())
@@ -239,36 +242,48 @@ function Home(){
     const[openBracket,setOpenState]=useState(0);
     
     //문제 선택
-    const [problemNum,setProblemNum]=useState(5001);
-    const selectProbleRangeList = [5000];//[1000,2000,3000,4000,5000,6000,7000,8000,9000,10000,11000,12000,13000]; //문제 번호대 리스트
-    const [problemUrl, setProblemUrl] = useState(['https://s3.ap-northeast-2.amazonaws.com/page.thecoala.io/Algorithm/algorithm5/5001.png']); //문제링크
-    const [problemNumList,setProblemNumList]=useState([5001,5002,5003,5004,5005,5006,5007,5008,5009,5010,5011,5012,5013,5014,5015,5016,5017,5018,5019,5020,5021,5022,5023,5024,5025,5026,5027,5028,5029,5030,5031,5032,5033])//선택한 번호대 문제리스트
-    const prourl='https://s3.ap-northeast-2.amazonaws.com/page.thecoala.io/Algorithm/algorithm5/';//기본 링크
-    const problemUrl12=['https://s3.ap-northeast-2.amazonaws.com/page.thecoala.io/Algorithm/algorithm5/5012-1.png','https://s3.ap-northeast-2.amazonaws.com/page.thecoala.io/Algorithm/algorithm5/5012-2.png']
+    const [problemNum,setProblemNum]=useState(1001);
+    const selectProbleRangeList = [1000,2000,3000,4000,5000,6000,7000,8000,9000,10000,11000,12000,13000]; //문제 번호대 리스트
+    const [problemUrl, setProblemUrl] = useState('https://thecoala.io/Algorithm/algorithm_link/1001.html'); //문제링크
+   // const prourl='https://s3.ap-northeast-2.amazonaws.com/page.thecoala.io/Algorithm/algorithm5/';//기본 링크
     
     const onNumSet1Change=(e)=>{
-      /*
+      
       let minimum = e.target.value;
       let maximum = Number(minimum)+1000;
+      $('#problemNumSelectSet2').empty(); //바뀔 때마다 옵션 초기화
       fetch('http://dev-api.coala.services:8000/Problem-combo?minimum='+minimum+'&maximum='+maximum, {
         method: 'Get',
+        headers: { 'accept': 'application/json' }
       })
       .then((response) => response.json())
       .then((data) => {
-        data.stringify(data)
-        setProblemNumList(data);
+        for(var i=0;i<data.length;i++){
+          var problems=data[i].number
+          problems= $("<option>"+problems+"</option>");
+          $('#problemNumSelectSet2').append(problems);
+        }
+        setProblemUrl(data[0].content)
       });
-      */ //데이터 형식을 받아오는데 문제 있음. n천번대의 번호만 받아올 것이므로 number의 key값만 저장해야함. 현재는 입력해놓은 array의 디폴트 값으로 돌아가는 중
+
       document.getElementById("problemNumSelectSet2").style.visibility="visible";
     }
 
     const onNumSet2Change=(e)=>{
-      setProblemNum(Number(e.target.value));
-      problemNum===5012 
-      ? setProblemUrl(problemUrl12)
-      : problemNumList.map(function(a,i){
-        return(problemNumList[i]===problemNum ? setProblemUrl([prourl+problemNum+'.png']):null)
+      let min = Number(e.target.value)
+      let max = min+1
+      fetch('http://dev-api.coala.services:8000/Problem-combo?minimum='+min+'&maximum='+max, {
+        method: 'Get',
+        headers: { 'accept': 'application/json' }
       })
+      .then((response) => response.json())
+      .then((data) => {
+        data=data[0].content
+        setProblemUrl(data);
+      });
+      setProblemNum(e.target.value)
+      
+
       setCount(0);
       document.getElementById("coala3Display").style.display="block";
       document.getElementById("coala2Display").style.display="block";
@@ -382,12 +397,7 @@ function Home(){
                 ))}
                 </select>
                 <select id="problemNumSelectSet2" defaultValue="" style={{width: 80, height: 31.5, marginTop:3, visibility:"hidden",  borderRadius:5, borderBlockColor: "rgb(204, 202, 202)", position:"relative", top:-2 }} onChange={onNumSet2Change}>
-                <option value="" disabled>번호선택</option>
-                { problemNumList.map((item) => (
-                  <option value={item} key={item}>
-                    {item}
-                  </option>
-                ))}
+                  <option value="" disabled>번호선택</option>
                 </select>
                 <Link to="/" >
                   <button onClick={onLogoutClick} style={{float:'right', width: 100, height: 33, marginRight:15, marginTop:7, borderRadius:5, border:"none", backgroundColor: "rgb(228, 228, 228)",}}><img src="assets/imgs/logoutButton.png" alt="" style={{width: 100, height: 33,}}/></button>
@@ -411,9 +421,7 @@ function Home(){
                 sizes={[45, 55]}
               >
                 <div className="leftPanel" id="question">
-                  {
-                    problemUrl.map(i=><img key={i} src={i} alt="profile"/>)
-                  }
+                  <iframe className="leftPanel2" id="question2" title="qLink" src={problemUrl}/>
                 </div>
                 <Split
                   className="splitVertical" 

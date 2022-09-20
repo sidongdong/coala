@@ -86,18 +86,19 @@ select option[value=""][disabled] {
     padding-left: 5px;
 }
 
-.leftPanel img{
+#question2{
     position: relative; top:0; left: 0;
     max-width: 100%;
-    width: 1400px;
+    width: 1700px;
+    height: 100%;
 }/*기본 width를 크게 설정해놓고 max-width를 100%로 하면 화면 사이즈에 맞게 조정, 최대 크기는 1400*/
 
 
 #question{
     padding-left: 0.2%;
     background-color: rgba(255,255,255,1);
-    overflow-y: auto;
-    overflow-x: auto;
+    overflow-y: hidden;
+    overflow-x: hidden;
 }
 
 .codeEditor{

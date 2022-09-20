@@ -1,6 +1,7 @@
 import {Link} from "react-router-dom";
 import React from 'react';
 import { useState} from "react";
+import $ from 'jquery';
 
 //로그인 element
 function Login(){
@@ -18,8 +19,6 @@ function Login(){
       })
     }
   
-    const [selectTeacherList, setTeacher] = useState([]); //선택 가능 선생님 set
-  
     function loginClick(){
       const url='http://dev-api.coala.services:8000/student-login-check/'+userId+'/'+userPw
       fetch(url, {
@@ -28,14 +27,30 @@ function Login(){
                 .then((response) => response.json())
                 .then((result) => {
                         if(result===true){
+                          //const selectTeacherName = [];
                           document.getElementById("enter").style.display="block";
                           fetch("http://dev-api.coala.services:8000/get-all-redis-teacher", {
                             method: 'Get',
                           })
                           .then((response) => response.json())
                           .then((result) => {
-                                  setTeacher(result)
-                                })
+                            //$("#teacherSelectSet").empty();
+                            //console.log(result.length)
+                            for(var i=0;i<result.length;i++){
+                              const url2='http://dev-api.coala.services:8000/get-teacher-info/'+result[i]
+                              fetch(url2, {
+                                method: 'Get',
+                                headers: { 'accept': 'application/json' },
+                              })
+                              .then((response) => response.json())
+                              .then((result1) => {
+                                result1=result1["t_name"]
+                                result1= $("<option>"+result1+"</option>");
+                                $('#teacherSelectSet').append(result1);
+                              })
+                            }
+                            //setTeacher(selectTeacherName);
+                          })
                         }
                         else{
                           alert(`아이디와 비밀번호를 다시 확인해 주세요`)
@@ -44,6 +59,20 @@ function Login(){
       //
     }
   
+    function onTeacherChange(e){
+      const url='http://dev-api.coala.services:8000/get-teacher-name/'+e.target.value
+      fetch(url, {
+        method: 'Get',
+        headers: { 'accept': 'application/json' },
+      })
+      .then((response) => response.json())
+      .then((result) => {
+        //console.log("1: "+result)
+        result=result["id"]
+        console.log("2: "+result)
+        setTeacherId(result);
+      })
+    }
   
     function onEnterClick(){
       const url="http://dev-api.coala.services:8000/student-redis-Login?teacher_id="+teacherId+"&student_id="+userId
@@ -72,20 +101,15 @@ function Login(){
           <h1 style={{ padding:20}}>Welcome to Coala</h1>
         </header>
         <input name="userId" onChange={onLoginChange} placeholder="아이디" value={userId}></input>
-        <input name="userPw" onChange={onLoginChange} placeholder="비밀번호" value={userPw}></input>
+        <input name="userPw" onChange={onLoginChange} placeholder="비밀번호" value={userPw} type='password'></input>
         <button onClick={loginClick}>로그인</button>
         <div id="enter" style={{ display:'none' ,padding:20 }}>
-          <select id="teacherSelectSet" onChange={(e)=>{setTeacherId(e.target.value)}} >
+          <select id="teacherSelectSet" onChange={onTeacherChange} >
             <option>선생님</option>
-            {selectTeacherList.map((item) => (
-                <option value={item} key={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
-            <Link to="/next" state = {{teacherID: teacherId ,userID: userId}}>
-                <button onClick={onEnterClick} >접속하기</button>
-            </Link>
+          </select>
+          <Link to="/next" state = {{teacherID: teacherId ,userID: userId}}>
+              <button onClick={onEnterClick} >접속하기</button>
+          </Link>
             
         </div>
       </div>
