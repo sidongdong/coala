@@ -102,12 +102,10 @@ select option[value=""][disabled] {
 }
 
 .codeEditor{
-    z-index: 1;
     border-radius: 10px;
 }
 
 #solution{
-    z-index: 1;
     border-radius: 10px;
 }
 
@@ -197,7 +195,6 @@ select option[value=""][disabled] {
     position: relative;
     left: calc(100vw - 420px);
     top: 45px;
-    z-index: 3;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 }
@@ -205,7 +202,22 @@ select option[value=""][disabled] {
     position: relative;
     left: calc(100vw - 446px);
     top: 57px;
-    z-index: 2;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
+}
+
+#infoModal{
+    width: 300px;
+    height: 250px;
+    margin:0 auto; 
+    border-radius: 10px;
+    display:grid;
+    place-items: center;
+}
+
+#feedbackModal{
+    width: 500px;
+    border-radius: 10px;
+    display:grid;
+    place-items: center;
 }

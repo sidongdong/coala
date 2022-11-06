@@ -1,13 +1,12 @@
 import './App.css';
-import {Link} from "react-router-dom";
-import React, { useRef } from 'react';
-import { useState, useEffect} from "react";
+import {Link, useLocation} from "react-router-dom";
+import React, { useRef, useState, useEffect} from "react";
 import $ from 'jquery';
 import {Base64} from 'js-base64';
 //import utf8 from 'utf8';
 import Split from 'react-split'
 import CodeEditor from '@uiw/react-textarea-code-editor';
-import { useLocation } from "react-router-dom"; 
+import Modal from 'react-modal';
 //import { io } from "socket.io-client";
 
 
@@ -23,7 +22,7 @@ function Home(){
     
     let languageSelected;
     const [languageId,setLanNum] = useState("54");
-    let writingDafault="#include<iostream>\nusing namespace std;\nint main(){\n    cout<<\"Hello, World!\";\n    return 0;\n}";
+    let writingDafault="#include<iostream>\nusing namespace std;\nint main()\n{\n    cout<<\"Hello, World!\";\n    return 0;\n}";
     const [code, setCode] = useState( writingDafault );
     const[wholeText,setText]=useState(writingDafault);
     const [editorFontSize, setFontSize] = useState( 14 );
@@ -40,14 +39,14 @@ function Home(){
   
       if (languageSelected==="C++"){
         setLanNum("54");
-        writingDafault="#include<iostream>\nusing namespace std;\nint main(){\n    cout<<\"Hello, World!\";\n    return 0;\n}";
+        writingDafault="#include<iostream>\nusing namespace std;\nint main()\n{\n    cout<<\"Hello, World!\";\n    return 0;\n}";
         setLan("cpp");
         setInput("cin>>");
         setLanImg("assets/languageLogo/cpp_logo.png")
       }
       else if(languageSelected==="C"){
         setLanNum("50");
-        writingDafault="#include<stdio.h>\nint main(){\n    printf(\"Hello, World!\");\n    return 0;\n}";
+        writingDafault="#include<stdio.h>\nint main()\n{\n    printf(\"Hello, World!\");\n    return 0;\n}";
         setLan("c");
         setInput("scanf(");
         setLanImg("assets/languageLogo/c_logo.png")
@@ -147,12 +146,74 @@ function Home(){
       setRead(false);
     };
 
+    const [infoIsOpen,setInfoOpen] = useState(false);
+    const [myInfo, setMyInfo] = useState("ID:\n이름:\nCoCo\n선생님\n")
     const onMyInfoClick = () =>{
-      alert(`서비스 준비 중입니다`)
+      const url="http://dev-api.coala.services:8000/get-student-info/"+ userID
+      fetch(url, {
+          method: 'Get',
+        })
+        .then((response) => response.json())
+        .then((result) => {
+          let stdName=result["std_name"]
+          let id=result["id"]
+          let coalaPoint=result["score"]
+          let teacherName=result["teacher"]
+          setMyInfo("ID:"+id+"\n이름:"+stdName+"\nCoCo:"+coalaPoint+"\n선생님:"+teacherName)
+        })
+      setInfoOpen(true);
     };
 
     const onSaveClick = () =>{
       alert(`서비스 준비 중입니다`)
+    };
+
+    const[feedbackCode,setFeedback]=useState("")
+    const [feedbackIsOpen,setFeedbackOpen] = useState(false);
+    const onAnswerClick = () =>{
+      const answerUrl="http://dev-api.coala.services:8000/get-web-answer-check?student_id="+ userID+"&problem_num=1"+problemNum
+      fetch(answerUrl, {
+          method: 'Get',
+        })
+        .then((response) => response.json())
+        .then((result) => {
+          if(result === 1){
+            alert(`😀정답입니다`);
+          }
+          else{
+            alert(`😈오답입니다`);
+          };
+        })
+      const feedbackUrl="http://dev-api.coala.services:8000/get-feedback-code/"+userID
+      fetch(feedbackUrl, {
+          method: 'Get',
+        })
+        .then((response) => response.json())
+        .then((resultF) => {
+          if(resultF==="no feedback code"){
+            alert(`📑받은 피드백이 없습니다`);
+          }
+          else{
+            setFeedbackOpen(true)
+            resultF=resultF.replace(/@Reverse_slash@/gi,"\\");
+            resultF=resultF.replace(/@Mini@/gi,"'");
+            resultF=resultF.replace(/@ChangeLines@/gi,"\n");
+            resultF=resultF.replace(/@and@/gi,"&");
+            resultF=resultF.replace(/@Double@/gi,"\"");
+            resultF=resultF.replace(/@Shap@/gi,"#");
+            resultF=resultF.replace(/@Point@/gi,"!");
+            resultF=resultF.replace(/@OpenBig@/gi,"[");
+            resultF=resultF.replace(/@CloseBig@/gi,"]");
+            resultF=resultF.replace(/@OpenMiddle@/gi,"{");
+            resultF=resultF.replace(/@CloseMiddle@/gi,"}");
+            resultF=resultF.replace(/@Comma@/gi,",");
+            resultF=resultF.replace(/@Percent@/gi,"%");
+            resultF=resultF.replace(/@Division@/gi,'/');
+            resultF=resultF.replace(/@SemiColon@/gi,';');
+            resultF=resultF.replace(/@Plus@/gi,'+');
+            setFeedback(resultF)
+          };
+        })
     };
 
     const onSetClick = () => {
@@ -179,7 +240,7 @@ function Home(){
       let solutiontext;
       solutiontext=$('#solution').val();
       let submittext;
-      submittext=solutiontext.replace(/\//gi,'@Reverse_slash@');
+      submittext=solutiontext.replace(/\\/gi,'@Reverse_slash@');
       submittext=submittext.replace(/'/gi,'@Mini@');
       submittext=submittext.replace(/\n/gi,'@ChangeLines@');
       submittext=submittext.replace(/&/gi,'@and@');
@@ -191,6 +252,10 @@ function Home(){
       submittext=submittext.replace(/\{/gi,'@OpenMiddle@');
       submittext=submittext.replace(/\}/gi,'@CloseMiddle@');
       submittext=submittext.replace(/,/gi,'@Comma@');
+      submittext=submittext.replace(/%/gi,'@Percent@');
+      submittext=submittext.replace(/\//gi,'@Division@');
+      submittext=submittext.replace(/;/gi,'@SemiColon@');
+      submittext=submittext.replace(/\+/gi,'@Plus@');
       let problem_num=problemNum;
       //console.log(teacherID);
       //console.log(userID);
@@ -243,14 +308,14 @@ function Home(){
     
     //문제 선택
     const [problemNum,setProblemNum]=useState(1001);
-    const selectProbleRangeList = [1000,2000,3000,4000,5000,6000,7000,8000,9000,10000,11000,12000,13000]; //문제 번호대 리스트
+    const selectProbleRangeList = [1000,2000,3000,4000,5000,7000,8000,9000,10000,11000,12000,13000]; //문제 번호대 리스트, 6000번대는 모의고사라 제외
     const [problemUrl, setProblemUrl] = useState('https://thecoala.io/Algorithm/algorithm_link/1001.html'); //문제링크
    // const prourl='https://s3.ap-northeast-2.amazonaws.com/page.thecoala.io/Algorithm/algorithm5/';//기본 링크
     
     const onNumSet1Change=(e)=>{
       
       let minimum = e.target.value;
-      let maximum = Number(minimum)+1000;
+      let maximum = Number(minimum)+200; //200번대는 시험문제라 제외
       $('#problemNumSelectSet2').empty(); //바뀔 때마다 옵션 초기화
       fetch('http://dev-api.coala.services:8000/Problem-combo?minimum='+minimum+'&maximum='+maximum, {
         method: 'Get',
@@ -371,6 +436,44 @@ function Home(){
   
     return (
       <div className="wholeScreen" id="wholeScreen">
+        <Modal 
+          id = "infoModal"
+          isOpen={infoIsOpen} 
+          onRequestClose={()=>setInfoOpen(false)}
+          ariaHideApp={false}
+        >
+          <h3>내 정보🐨</h3>
+          <textarea 
+            value={myInfo} 
+            readOnly="readonly"
+            style={{border:"none", resize:"none",height:100,width:100}}
+          ></textarea>
+          <button onClick={()=>setInfoOpen(false)} style={{width:100,height:30,borderRadius:5,border:"none",backgroundColor:"skyblue"}}>확인</button>
+        </Modal>
+        <Modal 
+          id = "feedbackModal"
+          isOpen={feedbackIsOpen} 
+          ariaHideApp={false}
+          backdrop = "static"
+        >
+          <h3>피드백</h3>
+          <CodeEditor
+            value={feedbackCode}
+            readOnly="readonly"
+            padding={15}
+            language={language}
+            style={{
+              backgroundColor: "black",
+              width:500,
+              height: 400,
+              fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
+              fontSize: editorFontSize,
+              resize:"none",
+              borderRadius: 5,
+            }}
+          />
+          <button onClick={()=>setFeedbackOpen(false)} style={{width:100,height:30,borderRadius:5,border:"none",backgroundColor:"skyblue"}}>닫기</button>
+        </Modal>
         <header style={{
         fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
         }}>
@@ -403,8 +506,9 @@ function Home(){
                   <button onClick={onLogoutClick} style={{float:'right', width: 100, height: 33, marginRight:15, marginTop:7, borderRadius:5, border:"none", backgroundColor: "rgb(228, 228, 228)",}}><img src="assets/imgs/logoutButton.png" alt="" style={{width: 100, height: 33,}}/></button>
                 </Link>
                 <button onClick={onMyInfoClick} style={{float:'right', width: 103, height: 33, marginRight:8, marginTop:7, borderRadius:5, border:"none", backgroundColor: "rgb(228, 228, 228)",}}><img src="assets/imgs/infoButton.png" alt="" style={{width: 103, height: 33,}}/></button>
-                <button  onClick={onSaveClick} style={{float:'right', width: 103, height: 33, marginRight:8, marginTop:7, borderRadius:5, border:"none", backgroundColor: "rgb(228, 228, 228)",}}><img src="assets/imgs/saveButton.png" alt="" style={{width: 103, height: 33,}}/></button>
-                <select id="languageSelectSet" onChange={onLanguageChange} style={{float:'right', width: 90, height: 34, marginRight:4, marginTop:7.5,  borderRadius:5, borderBlockColor: "rgb(204, 202, 202)",}}>
+                <button  onClick={onSaveClick} style={{float:'right', width: 103, height: 33, marginRight:6, marginTop:7, borderRadius:5, border:"none", backgroundColor: "rgb(228, 228, 228)",}}><img src="assets/imgs/saveButton.png" alt="" style={{width: 103, height: 33,}}/></button>
+                <button  onClick={onAnswerClick} style={{float:'right', width: 103, height: 33, marginTop:8.3, borderRadius:5, borderColor:"rgb(160, 160, 160)",border:2, backgroundColor:"rgba(255,255,255,1)"}}>정답 확인</button>
+                <select id="languageSelectSet" onChange={onLanguageChange} style={{float:'right', width: 94, height: 34, marginRight:6, marginTop:7.5 ,borderRadius:5, borderBlockColor: "rgb(204, 202, 202)",}}>
                 {selectLanguageNameList.map((item) => (
                     <option value={item} key={item}>
                       {item}
