@@ -16,6 +16,7 @@ function Home(){
     const location = useLocation();
     var teacherID=location.state?.teacherID;
     var userID=location.state?.userID;
+    var teacherName=location.state?.teacherName;
     //console.log(teacherID);
     //console.log(userID);
     const selectLanguageNameList = ["C++", "C", "Python", "Java"]; //선택 가능 언어 set
@@ -28,7 +29,7 @@ function Home(){
     const [editorFontSize, setFontSize] = useState( 14 );
     const [language,setLan] = useState("cpp");
     const [inputNeed,setInput] = useState("cin>>")
-    const[lineNumber,setLineNum]=useState('1.\n2.\n3.\n4.\n5.\n6.');
+    const[lineNumber,setLineNum]=useState('1.\n2.\n3.\n4.\n5.\n6.\n7.');
     const[read,setRead] = useState(true);
     const[languageImgUrl,setLanImg] = useState("assets/languageLogo/cpp_logo.png")
     const date = new Date();
@@ -158,7 +159,6 @@ function Home(){
           let stdName=result["std_name"]
           let id=result["id"]
           let coalaPoint=result["score"]
-          let teacherName=result["teacher"]
           setMyInfo("ID:"+id+"\n이름:"+stdName+"\nCoCo:"+coalaPoint+"\n선생님:"+teacherName)
         })
       setInfoOpen(true);
@@ -171,12 +171,14 @@ function Home(){
     const[feedbackCode,setFeedback]=useState("")
     const [feedbackIsOpen,setFeedbackOpen] = useState(false);
     const onAnswerClick = () =>{
-      const answerUrl="http://dev-api.coala.services:8000/get-web-answer-check?student_id="+ userID+"&problem_num=1"+problemNum
+      console.log(problemNum)
+      const answerUrl="http://dev-api.coala.services:8000/get-web-answer-check?student_id="+ userID+"&problem_num="+problemNum
       fetch(answerUrl, {
           method: 'Get',
         })
         .then((response) => response.json())
         .then((result) => {
+          console.log(result);
           if(result === 1){
             alert(`😀정답입니다`);
           }
@@ -446,7 +448,7 @@ function Home(){
           <textarea 
             value={myInfo} 
             readOnly="readonly"
-            style={{border:"none", resize:"none",height:100,width:100}}
+            style={{border:"none", resize:"none",height:100,width:200}}
           ></textarea>
           <button onClick={()=>setInfoOpen(false)} style={{width:100,height:30,borderRadius:5,border:"none",backgroundColor:"skyblue"}}>확인</button>
         </Modal>

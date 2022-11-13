@@ -6,6 +6,7 @@ import $ from 'jquery';
 //로그인 element
 function Login(){
     const[teacherId,setTeacherId]=useState('')
+    const[teacherName,setTeacherName]=useState('')
     const [loginInfo,setLogin] = useState({
       userId: "",
       userPw: "",
@@ -60,6 +61,8 @@ function Login(){
     }
   
     function onTeacherChange(e){
+      setTeacherName(e.target.value);
+      //console.log(teacherName)
       const url='http://dev-api.coala.services:8000/get-teacher-name/'+e.target.value
       fetch(url, {
         method: 'Get',
@@ -69,7 +72,7 @@ function Login(){
       .then((result) => {
         //console.log("1: "+result)
         result=result["id"]
-        console.log("2: "+result)
+        //console.log("2: "+result)
         setTeacherId(result);
       })
     }
@@ -107,7 +110,7 @@ function Login(){
           <select id="teacherSelectSet" onChange={onTeacherChange} >
             <option>선생님</option>
           </select>
-          <Link to="/next" state = {{teacherID: teacherId ,userID: userId}}>
+          <Link to="/next" state = {{teacherID: teacherId ,userID: userId,teacherName: teacherName}}>
               <button onClick={onEnterClick} >접속하기</button>
           </Link>
             
