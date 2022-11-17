@@ -15,6 +15,7 @@ header{
 
 select option[value=""][disabled] {
 	display: none;
+    color:rgb(164, 172, 82)
 }
 
 
@@ -101,9 +102,6 @@ select option[value=""][disabled] {
     overflow-x: hidden;
 }
 
-.codeEditor{
-    border-radius: 10px;
-}
 
 #solution{
     border-radius: 10px;
@@ -178,18 +176,6 @@ select option[value=""][disabled] {
     border-radius: 10px;
     height: 100%;
 }
-#lineCounter{
-    padding-top: 15px;
-    padding-left: 15px;
-    overflow: hidden;
-    height: 95%;
-    border: none;
-    resize: none;
-    outline: none;
-    color:rgb(163, 163, 163);
-    border-radius: 10px;
-} 
-
 
 #fontUp{
     position: relative;
@@ -197,6 +183,7 @@ select option[value=""][disabled] {
     top: 45px;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
+    z-index: 2;
 }
 #fontDown{
     position: relative;
@@ -204,6 +191,7 @@ select option[value=""][disabled] {
     top: 57px;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
+    z-index: 2;
 }
 
 #infoModal{

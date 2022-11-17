@@ -5,8 +5,11 @@ import $ from 'jquery';
 import {Base64} from 'js-base64';
 //import utf8 from 'utf8';
 import Split from 'react-split'
-import CodeEditor from '@uiw/react-textarea-code-editor';
 import Modal from 'react-modal';
+import CodeMirror from '@uiw/react-codemirror';
+import { loadLanguage, langNames, langs } from '@uiw/codemirror-extensions-langs';
+import { createTheme } from '@uiw/codemirror-themes';
+import { tags as t } from '@lezer/highlight';
 //import { io } from "socket.io-client";
 
 
@@ -23,55 +26,58 @@ function Home(){
     
     let languageSelected;
     const [languageId,setLanNum] = useState("54");
-    let writingDafault="#include<iostream>\nusing namespace std;\nint main()\n{\n    cout<<\"Hello, World!\";\n    return 0;\n}";
+    let writingDafault="#include <iostream>\nusing namespace std;\nint main()\n{\n    cout<<\"Hello, World!\";\n    return 0;\n}";
     const [code, setCode] = useState( writingDafault );
-    const[wholeText,setText]=useState(writingDafault);
+    //const[wholeText,setText]=useState(writingDafault);
     const [editorFontSize, setFontSize] = useState( 14 );
     const [language,setLan] = useState("cpp");
     const [inputNeed,setInput] = useState("cin>>")
-    const[lineNumber,setLineNum]=useState('1.\n2.\n3.\n4.\n5.\n6.\n7.');
+    //const[lineNumber,setLineNum]=useState('1.\n2.\n3.\n4.\n5.\n6.\n7.');
     const[read,setRead] = useState(true);
-    const[languageImgUrl,setLanImg] = useState("assets/languageLogo/cpp_logo.png")
+    //const[languageImgUrl,setLanImg] = useState("assets/languageLogo/cpp_logo.png")
     const date = new Date();
   
   
     const onLanguageChange = () => {
+      loadLanguage('tsx');
+      langs.tsx();
+      //console.log('langNames:', langNames);
+
       languageSelected = $('#languageSelectSet').val(); //select에서 선택된 value
   
       if (languageSelected==="C++"){
         setLanNum("54");
-        writingDafault="#include<iostream>\nusing namespace std;\nint main()\n{\n    cout<<\"Hello, World!\";\n    return 0;\n}";
-        setLan("cpp");
+        writingDafault="#include <iostream>\nusing namespace std;\nint main()\n{\n    cout<<\"Hello, World!\";\n    return 0;\n}";
+        setLan(langNames[91]);
         setInput("cin>>");
-        setLanImg("assets/languageLogo/cpp_logo.png")
+        //setLanImg("assets/languageLogo/cpp_logo.png")
       }
       else if(languageSelected==="C"){
         setLanNum("50");
-        writingDafault="#include<stdio.h>\nint main()\n{\n    printf(\"Hello, World!\");\n    return 0;\n}";
-        setLan("c");
+        writingDafault="#include <stdio.h>\nint main()\n{\n    printf(\"Hello, World!\");\n    return 0;\n}";
+        setLan(langNames[3]);
         setInput("scanf(");
-        setLanImg("assets/languageLogo/c_logo.png")
+        //setLanImg("assets/languageLogo/c_logo.png")
       }
       else if(languageSelected==="Python"){
         setLanNum("71");
         writingDafault="print(\"Hello, World!\")";
-        setLan("py");
+        setLan(langNames[83]);
         setInput("input(");
-        setLanImg("assets/languageLogo/python_logo.png")
+        //setLanImg("assets/languageLogo/python_logo.png")
       }
       else if(languageSelected==="Java"){
         setLanNum("62");
         writingDafault="class Main {\n    public static void main(String args[]) {\n      System.out.println(\"Hello, World!\");\n    }\n}";
-        setLan("java");
+        setLan(langNames[89]);
         setInput("Scanner");
-        setLanImg("assets/languageLogo/java_logo.png")
+        //setLanImg("assets/languageLogo/java_logo.png")
       }
       setCode(writingDafault);
-      setText(writingDafault);
+      //setText(writingDafault);
   
       let input=writingDafault;
       input = input.toString().split("\n").map((line, i) => `${i + 1}.`).join("\n");
-      setLineNum(input);//라인 수 세기
 
     }; //select value 값에 따라 languageId와 디폴트값 변경
   
@@ -101,8 +107,9 @@ function Home(){
       if(!mounted.current){
         mounted.current = true; //count값이 마운트 될 때는 제외, 업데이트 시에만 렌더링
       } else {
-        let solutiontext;
-        solutiontext=$('#solution').val();
+        let solutiontext=code;
+        
+        console.log(solutiontext);
         let input = null;
         if(solutiontext.includes(inputNeed)){
           input = $('#result').val();
@@ -150,6 +157,8 @@ function Home(){
     const [infoIsOpen,setInfoOpen] = useState(false);
     const [myInfo, setMyInfo] = useState("ID:\n이름:\nCoCo\n선생님\n")
     const onMyInfoClick = () =>{
+      document.getElementById("fontUp").style.zIndex=0;
+      document.getElementById("fontDown").style.zIndex=0;
       const url="http://dev-api.coala.services:8000/get-student-info/"+ userID
       fetch(url, {
           method: 'Get',
@@ -171,14 +180,15 @@ function Home(){
     const[feedbackCode,setFeedback]=useState("")
     const [feedbackIsOpen,setFeedbackOpen] = useState(false);
     const onAnswerClick = () =>{
-      console.log(problemNum)
+      document.getElementById("fontUp").style.zIndex=2; 
+      document.getElementById("fontDown").style.zIndex=2; 
+      document.getElementById("editor").style.zIndex=1;
       const answerUrl="http://dev-api.coala.services:8000/get-web-answer-check?student_id="+ userID+"&problem_num="+problemNum
       fetch(answerUrl, {
           method: 'Get',
         })
         .then((response) => response.json())
         .then((result) => {
-          console.log(result);
           if(result === 1){
             alert(`😀정답입니다`);
           }
@@ -238,9 +248,13 @@ function Home(){
       setFontSize(editorFontSize-1);
     };
 
+    const onCodeChange=(e)=> {
+      setCode(e);
+    }
+
     const onSubmitClick=()=> {
-      let solutiontext;
-      solutiontext=$('#solution').val();
+      let solutiontext=code;
+    
       let submittext;
       submittext=solutiontext.replace(/\\/gi,'@Reverse_slash@');
       submittext=submittext.replace(/'/gi,'@Mini@');
@@ -296,17 +310,6 @@ function Home(){
         alert(count+'번 시도했습니다.'+"\n"+'감점 횟수:'+(-compileTry));
       }
     }
-
-    const [cursor, setCursor] = useState(0);
-  
-      //커서 위치 조정
-      function onCursor(e){
-        if((e.key==="[")||(e.key==="{")||(e.key==="(")||(e.key==="'")||(e.key==="\"")){
-          e.target.setSelectionRange(cursor+1,cursor+1);
-        }
-      }
-    
-    const[openBracket,setOpenState]=useState(0);
     
     //문제 선택
     const [problemNum,setProblemNum]=useState(1001);
@@ -356,66 +359,7 @@ function Home(){
       document.getElementById("coala2Display").style.display="block";
       document.getElementById("coala1Display").style.display="block";
     }
-  
-
-    //자동 괄호 닫기 함수
-    function bracketClose(e) {
-  
-      var selectPos=e.target.selectionStart;
-      var beforeText=wholeText.substring(0,selectPos);
-      var closeBracket="";
-      var afterText=wholeText.substring(selectPos,wholeText.length);
-      const close=e.key;
-      setOpenState(0);
-  
-      if(close==="["){
-        closeBracket="[]";
-        setOpenState(1);
-      }
-      else if (close==="{"){
-        closeBracket="{}";
-        setOpenState(1);
-      }
-      else if (close==="("){
-        closeBracket="()";
-        setOpenState(1);
-      }
-      else if (close==="'"){
-        closeBracket="''";
-        setOpenState(1);
-      }
-      else if(close==="\""){
-        closeBracket="\"\"";
-        setOpenState(1);
-      }
-  
-      setText(beforeText+closeBracket+afterText);
-      setCursor(selectPos);
-  
-    };
     
-    function onBraketChange(e){
-  
-      if(openBracket===1){
-        setCode(wholeText);
-      }
-      else{
-        setCode(e.target.value);
-        setText(e.target.value);
-      }
-  
-      var input=document.getElementById("solution").value;
-      input = input.toString().split("\n").map((line, i) => `${i + 1}.`).join("\n");
-      setLineNum(input);
-      
-      
-      let textarea = document.getElementById('lineCounter');
-      if (textarea) {
-        textarea.style.height = 'auto';
-        let height = textarea.scrollHeight; // 높이
-        textarea.style.height = `${height + 350}px`;
-      }//line 수에 맞게 자동 높이 조절
-    }
     /*
     const socket = io("http://172.30.1.23:9998");
     
@@ -432,9 +376,36 @@ function Home(){
       console.log(string)
       })
     */
-   
 
-    document.documentElement.setAttribute('data-color-mode', 'dark'); //다크모드 사용
+      const myTheme = createTheme({
+        theme: 'dark',
+        settings: {
+          background: 'black',
+          foreground: 'rgb(255, 194, 38)',
+          caret: 'white',
+          selection: 'rgb(56, 96, 117)',
+          selectionMatch: 'rgb(123, 134, 63)',
+          //lineHighlight: 'rgb(51, 50, 50)',
+          gutterBackground: 'black',
+          gutterForeground: 'rgb(183, 183, 183)',
+        },
+        styles: [
+          { tag: t.comment, color: 'green' },
+          { tag: t.variableName, color: 'rgb(111, 173, 198)' },
+          { tag: [t.string, t.special(t.brace)], color: 'white' },
+          { tag: t.number, color: 'rgb(183, 183, 183)' },
+          { tag: t.bool, color: 'yellow' },
+          { tag: t.null, color: 'rgb(183, 183, 183)' },
+          { tag: t.keyword, color: 'rgb(183, 183, 183)' },
+          { tag: t.operator, color: 'rgb(183, 183, 183)' },
+          { tag: t.className, color: 'rgb(183, 183, 183)' },
+          { tag: t.definition(t.typeName), color: 'rgb(183, 183, 183)' },
+          { tag: t.typeName, color: 'rgb(183, 183, 183)' },
+          { tag: t.angleBracket, color: 'rgb(183, 183, 183)' },
+          { tag: t.tagName, color: 'rgb(183, 183, 183)' },
+          { tag: t.attributeName, color: 'rgb(183, 183, 183)' },
+        ],
+      });
   
     return (
       <div className="wholeScreen" id="wholeScreen">
@@ -450,7 +421,7 @@ function Home(){
             readOnly="readonly"
             style={{border:"none", resize:"none",height:100,width:200}}
           ></textarea>
-          <button onClick={()=>setInfoOpen(false)} style={{width:100,height:30,borderRadius:5,border:"none",backgroundColor:"skyblue"}}>확인</button>
+          <button onClick={()=> {setInfoOpen(false); document.getElementById("fontUp").style.zIndex=2; document.getElementById("fontDown").style.zIndex=2;}} style={{width:100,height:30,borderRadius:5,border:"none",backgroundColor:"skyblue"}}>확인</button>
         </Modal>
         <Modal 
           id = "feedbackModal"
@@ -459,11 +430,12 @@ function Home(){
           backdrop = "static"
         >
           <h3>피드백</h3>
-          <CodeEditor
+          <CodeMirror
+            theme={myTheme}
             value={feedbackCode}
             readOnly="readonly"
             padding={15}
-            language={language}
+            extensions={[loadLanguage(language)]}
             style={{
               backgroundColor: "black",
               width:500,
@@ -473,8 +445,9 @@ function Home(){
               resize:"none",
               borderRadius: 5,
             }}
+            //onChange={onChange}
           />
-          <button onClick={()=>setFeedbackOpen(false)} style={{width:100,height:30,borderRadius:5,border:"none",backgroundColor:"skyblue"}}>닫기</button>
+          <button onClick={()=> {setFeedbackOpen(false); document.getElementById("editor").style.zIndex=0;}} style={{width:100,height:30,borderRadius:5,border:"none",backgroundColor:"skyblue"}}>닫기</button>
         </Modal>
         <header style={{
         fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
@@ -535,38 +508,16 @@ function Home(){
                   direction= 'vertical'
                   style={{borderRadius:10}}
                 >
-                  <div className='editor'>
-                    <div>
-                      <textarea 
-                        id="lineCounter"  
-                        value={lineNumber}
-                        wrap='on' 
-                        readOnly="readonly"
-                        style={{
-                          backgroundColor: "black",
-                          fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
-                          fontSize: editorFontSize,
-                          width: editorFontSize*1.8,
-                        }}>1.</textarea>
-                    </div>
-                    <div className='codeEditor'>
-                      <CodeEditor
-                        id="solution"
-                        wrap='on'
-                        value={code}
-                        language={language}
-                        placeholder="코딩"
-                        onKeyDown={bracketClose}
-                        onChange={onBraketChange}
-                        onKeyUp={onCursor}
-                        padding={15}
-                        style={{
-                          backgroundColor: "black",
-                          fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
-                          fontSize: editorFontSize,
-                        }}
-                      />
-                    </div>
+                  <div className='editor' id='editor'>
+                    <CodeMirror
+                      id="solution"
+                      value={code}
+                      extensions={[loadLanguage(language)]}
+                      theme={myTheme}
+                      placeholder="코딩"
+                      style={{fontSize:editorFontSize, padding:10}}
+                      onChange={onCodeChange}
+                    />
                   </div>
                   <textarea readOnly={read} id="result" placeholder="컴파일" style={{padding : 15, fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace', fontSize: editorFontSize, resize:"none"}}  defaultValue={""}/>
                 </Split>
