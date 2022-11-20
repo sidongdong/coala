@@ -1,8 +1,9 @@
 import './App.css';
 import {Link, useLocation} from "react-router-dom";
-import React, { useRef, useState, useEffect} from "react";
+import React, { useRef, useState, useEffect, useMemo } from "react";
 import $ from 'jquery';
 import {Base64} from 'js-base64';
+import moment from 'moment'
 //import utf8 from 'utf8';
 import Split from 'react-split'
 import Modal from 'react-modal';
@@ -26,16 +27,16 @@ function Home(){
     
     let languageSelected;
     const [languageId,setLanNum] = useState("54");
-    let writingDafault="#include <iostream>\nusing namespace std;\nint main()\n{\n    cout<<\"Hello, World!\";\n    return 0;\n}";
+    let writingDafault="#include <iostream>\nusing namespace std;\nint main()\n{\n  cout<<\"Hello, World!\";\n  return 0;\n}";
     const [code, setCode] = useState( writingDafault );
     //const[wholeText,setText]=useState(writingDafault);
     const [editorFontSize, setFontSize] = useState( 14 );
     const [language,setLan] = useState("cpp");
     const [inputNeed,setInput] = useState("cin>>")
-    //const[lineNumber,setLineNum]=useState('1.\n2.\n3.\n4.\n5.\n6.\n7.');
     const[read,setRead] = useState(true);
     //const[languageImgUrl,setLanImg] = useState("assets/languageLogo/cpp_logo.png")
-    const date = new Date();
+    const date = moment().format('YYYY-MM-DD HH:mm:ss');
+    
   
   
     const onLanguageChange = () => {
@@ -47,14 +48,14 @@ function Home(){
   
       if (languageSelected==="C++"){
         setLanNum("54");
-        writingDafault="#include <iostream>\nusing namespace std;\nint main()\n{\n    cout<<\"Hello, World!\";\n    return 0;\n}";
+        writingDafault="#include <iostream>\nusing namespace std;\nint main()\n{\n  cout<<\"Hello, World!\";\n  return 0;\n}";
         setLan(langNames[91]);
         setInput("cin>>");
         //setLanImg("assets/languageLogo/cpp_logo.png")
       }
       else if(languageSelected==="C"){
         setLanNum("50");
-        writingDafault="#include <stdio.h>\nint main()\n{\n    printf(\"Hello, World!\");\n    return 0;\n}";
+        writingDafault="#include <stdio.h>\nint main()\n{\n  printf(\"Hello, World!\");\n  return 0;\n}";
         setLan(langNames[3]);
         setInput("scanf(");
         //setLanImg("assets/languageLogo/c_logo.png")
@@ -68,7 +69,7 @@ function Home(){
       }
       else if(languageSelected==="Java"){
         setLanNum("62");
-        writingDafault="class Main {\n    public static void main(String args[]) {\n      System.out.println(\"Hello, World!\");\n    }\n}";
+        writingDafault="class Main {\n  public static void main(String args[]) {\n    System.out.println(\"Hello, World!\");\n  }\n}";
         setLan(langNames[89]);
         setInput("Scanner");
         //setLanImg("assets/languageLogo/java_logo.png")
@@ -109,7 +110,7 @@ function Home(){
       } else {
         let solutiontext=code;
         
-        console.log(solutiontext);
+        //console.log(solutiontext);
         let input = null;
         if(solutiontext.includes(inputNeed)){
           input = $('#result').val();
@@ -155,6 +156,12 @@ function Home(){
     };
 
     const [infoIsOpen,setInfoOpen] = useState(false);
+    const [saveIsOpen,setSaveOpen] = useState(false);
+    const [codeSaveIsOpen,setCodeSaveOpen] = useState(false);
+    const [codeLoadIsOpen,setCodeLoadOpen] = useState(false);
+    const [savedCodeIsOpen,setSavedCodeOpen] =useState(false);
+    const [codeSave,setCodeSave] = useState("")
+    const [saveMemo,setMemo] =useState("")
     const [myInfo, setMyInfo] = useState("ID:\n이름:\nCoCo\n선생님\n")
     const onMyInfoClick = () =>{
       document.getElementById("fontUp").style.zIndex=0;
@@ -174,8 +181,74 @@ function Home(){
     };
 
     const onSaveClick = () =>{
-      alert(`서비스 준비 중입니다`)
+      document.getElementById("fontUp").style.zIndex=0;
+      document.getElementById("fontDown").style.zIndex=0;
+      setSaveOpen(true);
     };
+
+    const onCodeSaveClick = () => {
+      setCodeSaveOpen(false); 
+      document.getElementById("fontUp").style.zIndex=0; 
+      document.getElementById("fontDown").style.zIndex=0;
+
+      let submittext=codeSave;
+    
+      submittext=submittext.replace(/\\/gi,'@Reverse_slash@');
+      submittext=submittext.replace(/'/gi,'@Mini@');
+      submittext=submittext.replace(/\n/gi,'@ChangeLines@');
+      submittext=submittext.replace(/&/gi,'@and@');
+      submittext=submittext.replace(/"/gi,'@Double@');
+      submittext=submittext.replace(/#/gi,'@Shap@');
+      submittext=submittext.replace(/!/gi,'@Point@');
+      submittext=submittext.replace(/\[/gi,'@OpenBig@');
+      submittext=submittext.replace(/\]/gi,'@CloseBig@');
+      submittext=submittext.replace(/\{/gi,'@OpenMiddle@');
+      submittext=submittext.replace(/\}/gi,'@CloseMiddle@');
+      submittext=submittext.replace(/,/gi,'@Comma@');
+      submittext=submittext.replace(/%/gi,'@Percent@');
+      submittext=submittext.replace(/\//gi,'@Division@');
+      submittext=submittext.replace(/;/gi,'@SemiColon@');
+      submittext=submittext.replace(/\+/gi,'@Plus@');
+      let problem_num=problemNum;
+
+      const url='http://dev-api.coala.services:8000/websubmission?teacher_id='+teacherID+'&student_id='+userID+'&problem_num='+problem_num+'&compile_count='+count+'&code='+ submittext+ "&sub_type=Save"+ "&sub_time="+date+"&student_memo="+ saveMemo
+      fetch(url, {
+          method: 'Get',
+        })
+        .then((response) => response.json())
+        .then((result) => {
+          if(result==='sub_ok')
+          {
+            alert(`저장하였습니다`)
+          }
+        })
+    }
+
+    const [tableData,setTableData]= useState([]);
+    const [savedCode,setSavedCode] = useState("");
+    const [savedMemo,setSavedMemo] = useState("");
+    const onCodeLoadClick = () => {
+      setSaveOpen(false); 
+      setCodeLoadOpen(true);
+      document.getElementById("fontUp").style.zIndex=0; 
+      document.getElementById("fontDown").style.zIndex=0;
+
+      const url='http://dev-api.coala.services:8000/code-down?student_id='+userID
+      fetch(url, {
+          method: 'Get',
+        })
+        .then((response) => response.json())
+        .then((result) => {
+          setTableData(result); //setTableData(result=>[...result,result]); ??object array
+          //console.log(tableData);
+        })
+    }
+    const loadTable = {
+      header: ["날짜", "번호", "메모",],
+      data: tableData
+    }
+    
+    
 
     const[feedbackCode,setFeedback]=useState("")
     const [feedbackIsOpen,setFeedbackOpen] = useState(false);
@@ -204,6 +277,7 @@ function Home(){
         .then((resultF) => {
           if(resultF==="no feedback code"){
             alert(`📑받은 피드백이 없습니다`);
+            document.getElementById("editor").style.zIndex=0;
           }
           else{
             setFeedbackOpen(true)
@@ -250,6 +324,14 @@ function Home(){
 
     const onCodeChange=(e)=> {
       setCode(e);
+    }
+
+    const onCodeSaveChange=(e)=> {
+      setCodeSave(e);
+    }
+
+    const onMemoChange=(e)=>{
+      setMemo(e.target.value);
     }
 
     const onSubmitClick=()=> {
@@ -406,6 +488,7 @@ function Home(){
           { tag: t.attributeName, color: 'rgb(183, 183, 183)' },
         ],
       });
+     
   
     return (
       <div className="wholeScreen" id="wholeScreen">
@@ -448,6 +531,128 @@ function Home(){
             //onChange={onChange}
           />
           <button onClick={()=> {setFeedbackOpen(false); document.getElementById("editor").style.zIndex=0;}} style={{width:100,height:30,borderRadius:5,border:"none",backgroundColor:"skyblue"}}>닫기</button>
+        </Modal>
+        <Modal 
+          id = "saveModal"
+          isOpen={saveIsOpen} 
+          onRequestClose={()=>setSaveOpen(false)}
+          ariaHideApp={false}
+        >
+          <h3>내 코드🐨</h3>
+          <button onClick={()=> {setSaveOpen(false); setCodeSaveOpen(true); document.getElementById("fontUp").style.zIndex=0; document.getElementById("fontDown").style.zIndex=0;}} style={{width:100,height:30,borderRadius:5,border:"none",backgroundColor:"skyblue"}}>저장</button>
+          <button onClick={onCodeLoadClick} style={{width:100,height:30,borderRadius:5,border:"none",backgroundColor:"skyblue"}}>불러오기</button>
+        </Modal>
+        <Modal 
+          id = "codeSaveModal"
+          isOpen={codeSaveIsOpen} 
+          onRequestClose={()=>setCodeSaveOpen(false)}
+          ariaHideApp={false}
+        >
+          <h3 style={{marginTop: 5}}>코드 저장🐨</h3>
+          <div id="codeSaveText">
+            <CodeMirror
+              theme={myTheme}
+              padding={15}
+              extensions={[loadLanguage(language)]}
+              onChange={onCodeSaveChange}
+              placeholder="저장할 코드를 입력하세요"
+              color="white"
+              style={{
+                backgroundColor: "black",
+                fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
+                fontSize: editorFontSize,
+                resize:"none",
+                borderRadius: 5,
+                width: 600,
+                height: 350,
+              }}
+            />
+          </div>
+          <input onChange={onMemoChange} placeholder="메모를 입력하세요" style={{width: 590, marginTop: 3 }}></input>
+          <div>
+            <button onClick={onCodeSaveClick} style={{width:100,height:30,borderRadius:5,border:"none",backgroundColor:"skyblue", marginRight:5, marginTop:5}}>저장</button>
+            <button onClick={()=> {setCodeSaveOpen(false); document.getElementById("fontUp").style.zIndex=2; document.getElementById("fontDown").style.zIndex=2;}} style={{width:100,height:30,borderRadius:5,border:"none",backgroundColor:"skyblue", marginLeft:5, marginTop:7}}>닫기</button>
+          </div>
+        </Modal>
+        <Modal 
+          id="codeLoadModal"
+          isOpen={codeLoadIsOpen} 
+          onRequestClose={()=>setCodeLoadOpen(false)}
+          ariaHideApp={false}
+        >
+          <h3 style={{marginTop: 5}}>저장 목록🐨</h3>
+          <table style={{color:"black"}}>
+            <thead>
+              <tr>
+                {loadTable.header.map((item) => {
+                  return <th>{item}</th>;
+                })}
+              </tr>
+            </thead>
+            <tbody>
+              {loadTable.data.map((item) => {
+                return (
+                  <tr>
+                    <td onClick={()=>{
+                      setCodeLoadOpen(false);
+                      setSavedCodeOpen(true);
+                      let code= item.code;
+                      setSavedMemo(item.Memo); 
+                      code=code.replace(/@Reverse_slash@/gi,"\\");
+                      code=code.replace(/@Mini@/gi,"'");
+                      code=code.replace(/@ChangeLines@/gi,"\n");
+                      code=code.replace(/@and@/gi,"&");
+                      code=code.replace(/@Double@/gi,"\"");
+                      code=code.replace(/@Shap@/gi,"#");
+                      code=code.replace(/@Point@/gi,"!");
+                      code=code.replace(/@OpenBig@/gi,"[");
+                      code=code.replace(/@CloseBig@/gi,"]");
+                      code=code.replace(/@OpenMiddle@/gi,"{");
+                      code=code.replace(/@CloseMiddle@/gi,"}");
+                      code=code.replace(/@Comma@/gi,",");
+                      code=code.replace(/@Percent@/gi,"%");
+                      code=code.replace(/@Division@/gi,'/');
+                      code=code.replace(/@SemiColon@/gi,';');
+                      code=code.replace(/@Plus@/gi,'+');
+                      //console.log(code)
+                      setSavedCode(code);}
+                    } style={{cursor:"pointer"}}>{item.UserID}</td>
+                    <td>{item.Q_Num}</td>
+                    <td>{item.Memo}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          <button onClick={()=> {setCodeLoadOpen(false); document.getElementById("fontUp").style.zIndex=2; document.getElementById("fontDown").style.zIndex=2;}} style={{width:100,height:30,borderRadius:5,border:"none",backgroundColor:"skyblue"}}>닫기</button>
+        </Modal>
+        <Modal 
+          id = "savedCodeModal"
+          isOpen={savedCodeIsOpen} 
+          ariaHideApp={false}
+          backdrop = "static"
+        >
+          <h3>{savedMemo}</h3>
+          <div id="SavedCodeText">
+            <CodeMirror
+              theme={myTheme}
+              value={savedCode}
+              readOnly="readonly"
+              padding={15}
+              extensions={[loadLanguage(language)]}
+              style={{
+                backgroundColor: "black",
+                width:550,
+                height: 400,
+                fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
+                fontSize: editorFontSize,
+                resize:"none",
+                borderRadius: 5,
+              }}
+              //onChange={onChange}
+            />
+          </div>
+          <button onClick={()=> {setSavedCodeOpen(false); document.getElementById("fontUp").style.zIndex=2; document.getElementById("fontDown").style.zIndex=2;}} style={{width:100,height:30,borderRadius:5,border:"none",backgroundColor:"skyblue",marginTop:5}}>닫기</button>
         </Modal>
         <header style={{
         fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
@@ -536,3 +741,4 @@ function Home(){
     );
   }
 export default Home;
+

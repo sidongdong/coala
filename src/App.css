@@ -209,3 +209,107 @@ select option[value=""][disabled] {
     display:grid;
     place-items: center;
 }
+
+#saveModal{
+    width: 300px;
+    height: 250px;
+    margin:0 auto; 
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+}
+
+#codeSaveModal{
+    width: 600px;
+    height: 500px;
+    margin:0 auto; 
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+}
+
+#codeSaveText{
+    width:500px;
+    height: 400px;
+    overflow-y: auto; 
+    overflow-x: auto;
+    height: 100%;
+    width: 100%;
+    background-color: black;
+    border-radius: 10px;
+    resize: none;
+}
+
+#codeSaveText::-webkit-scrollbar {
+    width: 18px;  /* 스크롤바의 너비 */
+}
+
+#codeSaveText::-webkit-scrollbar-thumb {
+    height: 10%; /* 스크롤바의 길이 */
+    background: rgb(71, 70, 70); /* 스크롤바의 색상 */
+    border-radius: 10px;
+    background-clip: padding-box;
+    border: 4px solid transparent;
+    
+}
+
+#codeSaveText::-webkit-scrollbar-track {
+    padding-left: 5px;
+}
+
+#codeLoadModal{
+    width: auto;
+    height: 400px;
+    margin:0 auto; 
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+}
+
+#codeSaveModal{
+    width: 600px;
+    height: 500px;
+    margin:0 auto; 
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+}
+
+#savedCodeModal{
+    width: 600px;
+    height: 500px;
+    margin:0 auto; 
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+
+}
+
+#SavedCodeText{
+    width:500px;
+    height: 400px;
+    overflow-y: auto; 
+    overflow-x: auto;
+    height: 100%;
+    width: 100%;
+    background-color: black;
+    border-radius: 10px;
+    resize: none;
+}
+
+#SavedCodeText::-webkit-scrollbar {
+    width: 18px;  /* 스크롤바의 너비 */
+}
+
+#SavedCodeText::-webkit-scrollbar-thumb {
+    height: 10%; /* 스크롤바의 길이 */
+    background: rgb(71, 70, 70); /* 스크롤바의 색상 */
+    border-radius: 10px;
+    background-clip: padding-box;
+    border: 4px solid transparent;
+    
+}
+
+#SavedCodeText::-webkit-scrollbar-track {
+    padding-left: 5px;
+}
