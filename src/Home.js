@@ -1,7 +1,7 @@
 import './App.css';
 import {Link, useLocation} from "react-router-dom";
 import React, { useRef, useState, useEffect, useMemo } from "react";
-import $ from 'jquery';
+import $, { data } from 'jquery';
 import {Base64} from 'js-base64';
 import moment from 'moment'
 //import utf8 from 'utf8';
@@ -31,7 +31,7 @@ function Home(){
     const [code, setCode] = useState( writingDafault );
     //const[wholeText,setText]=useState(writingDafault);
     const [editorFontSize, setFontSize] = useState( 14 );
-    const [language,setLan] = useState("cpp");
+    const [language,setLan] = useState("c");
     const [inputNeed,setInput] = useState("cin>>")
     const[read,setRead] = useState(true);
     //const[languageImgUrl,setLanImg] = useState("assets/languageLogo/cpp_logo.png")
@@ -49,7 +49,7 @@ function Home(){
       if (languageSelected==="C++"){
         setLanNum("54");
         writingDafault="#include <iostream>\nusing namespace std;\nint main()\n{\n  cout<<\"Hello, World!\";\n  return 0;\n}";
-        setLan(langNames[91]);
+        setLan(langNames[3]); //원래 langNames[91]인데 for문 indentation 문제 때문에 c언어로 바꿔놓음
         setInput("cin>>");
         //setLanImg("assets/languageLogo/cpp_logo.png")
       }
@@ -83,7 +83,7 @@ function Home(){
     }; //select value 값에 따라 languageId와 디폴트값 변경
   
     const onCompileClick = ()=>{
-      
+
       setCount(count+1);
       //console.log(count)
       if(count===0){
@@ -191,7 +191,7 @@ function Home(){
       document.getElementById("fontUp").style.zIndex=0; 
       document.getElementById("fontDown").style.zIndex=0;
 
-      let submittext=codeSave;
+      let submittext=code;
     
       submittext=submittext.replace(/\\/gi,'@Reverse_slash@');
       submittext=submittext.replace(/'/gi,'@Mini@');
@@ -211,6 +211,7 @@ function Home(){
       submittext=submittext.replace(/\+/gi,'@Plus@');
       let problem_num=problemNum;
 
+
       const url='http://dev-api.coala.services:8000/websubmission?teacher_id='+teacherID+'&student_id='+userID+'&problem_num='+problem_num+'&compile_count='+count+'&code='+ submittext+ "&sub_type=Save"+ "&sub_time="+date+"&student_memo="+ saveMemo
       fetch(url, {
           method: 'Get',
@@ -228,6 +229,7 @@ function Home(){
     const [savedCode,setSavedCode] = useState("");
     const [savedMemo,setSavedMemo] = useState("");
     const onCodeLoadClick = () => {
+      
       setSaveOpen(false); 
       setCodeLoadOpen(true);
       document.getElementById("fontUp").style.zIndex=0; 
@@ -523,7 +525,6 @@ function Home(){
               backgroundColor: "black",
               width:500,
               height: 400,
-              fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
               fontSize: editorFontSize,
               resize:"none",
               borderRadius: 5,
@@ -549,29 +550,10 @@ function Home(){
           ariaHideApp={false}
         >
           <h3 style={{marginTop: 5}}>코드 저장🐨</h3>
-          <div id="codeSaveText">
-            <CodeMirror
-              theme={myTheme}
-              padding={15}
-              extensions={[loadLanguage(language)]}
-              onChange={onCodeSaveChange}
-              placeholder="저장할 코드를 입력하세요"
-              color="white"
-              style={{
-                backgroundColor: "black",
-                fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
-                fontSize: editorFontSize,
-                resize:"none",
-                borderRadius: 5,
-                width: 600,
-                height: 350,
-              }}
-            />
-          </div>
           <input onChange={onMemoChange} placeholder="메모를 입력하세요" style={{width: 590, marginTop: 3 }}></input>
           <div>
-            <button onClick={onCodeSaveClick} style={{width:100,height:30,borderRadius:5,border:"none",backgroundColor:"skyblue", marginRight:5, marginTop:5}}>저장</button>
-            <button onClick={()=> {setCodeSaveOpen(false); document.getElementById("fontUp").style.zIndex=2; document.getElementById("fontDown").style.zIndex=2;}} style={{width:100,height:30,borderRadius:5,border:"none",backgroundColor:"skyblue", marginLeft:5, marginTop:7}}>닫기</button>
+            <button onClick={onCodeSaveClick} style={{width:70,height:30,borderRadius:5,border:"none",backgroundColor:"skyblue", marginRight:5, marginTop:5}}>저장</button>
+            <button onClick={()=> {setCodeSaveOpen(false); document.getElementById("fontUp").style.zIndex=2; document.getElementById("fontDown").style.zIndex=2;}} style={{width:70,height:30,borderRadius:5,border:"none",backgroundColor:"skyblue", marginLeft:5, marginTop:7}}>닫기</button>
           </div>
         </Modal>
         <Modal 
@@ -594,6 +576,11 @@ function Home(){
                 return (
                   <tr>
                     <td onClick={()=>{
+
+                      document.getElementById("fontUp").style.zIndex=2; 
+                      document.getElementById("fontDown").style.zIndex=2; 
+                      document.getElementById("editor").style.zIndex=1;
+
                       setCodeLoadOpen(false);
                       setSavedCodeOpen(true);
                       let code= item.code;
@@ -644,7 +631,6 @@ function Home(){
                 backgroundColor: "black",
                 width:550,
                 height: 400,
-                fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
                 fontSize: editorFontSize,
                 resize:"none",
                 borderRadius: 5,
@@ -652,7 +638,10 @@ function Home(){
               //onChange={onChange}
             />
           </div>
-          <button onClick={()=> {setSavedCodeOpen(false); document.getElementById("fontUp").style.zIndex=2; document.getElementById("fontDown").style.zIndex=2;}} style={{width:100,height:30,borderRadius:5,border:"none",backgroundColor:"skyblue",marginTop:5}}>닫기</button>
+          <div>
+            <button onClick={()=> {setSavedCodeOpen(false); setCode(savedCode); document.getElementById("editor").style.zIndex=0;}} style={{width:100,height:30,borderRadius:5,border:"none",backgroundColor:"skyblue",marginTop:5,marginRight:5}}>적용</button>
+            <button onClick={()=> {setSavedCodeOpen(false); document.getElementById("editor").style.zIndex=0;}} style={{width:100,height:30,borderRadius:5,border:"none",backgroundColor:"skyblue",marginTop:5,marginLeft:5}}>닫기</button>
+          </div>
         </Modal>
         <header style={{
         fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
@@ -720,7 +709,7 @@ function Home(){
                       extensions={[loadLanguage(language)]}
                       theme={myTheme}
                       placeholder="코딩"
-                      style={{fontSize:editorFontSize, padding:10}}
+                      style={{fontSize:editorFontSize, padding:10,}}
                       onChange={onCodeChange}
                     />
                   </div>

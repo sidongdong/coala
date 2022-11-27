@@ -175,7 +175,7 @@ select option[value=""][disabled] {
     background-color: black;
     border-radius: 10px;
     height: 100%;
-}
+}  
 
 #fontUp{
     position: relative;
@@ -258,7 +258,7 @@ select option[value=""][disabled] {
 }
 
 #codeLoadModal{
-    width: auto;
+    width: 700px;
     height: 400px;
     margin:0 auto; 
     border-radius: 10px;
@@ -268,7 +268,7 @@ select option[value=""][disabled] {
 
 #codeSaveModal{
     width: 600px;
-    height: 500px;
+    height: 150px;
     margin:0 auto; 
     border-radius: 10px;
     display: grid;
@@ -278,7 +278,6 @@ select option[value=""][disabled] {
 #savedCodeModal{
     width: 600px;
     height: 500px;
-    margin:0 auto; 
     border-radius: 10px;
     display: grid;
     place-items: center;
