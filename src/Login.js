@@ -78,7 +78,7 @@ function Login(){
     }
   
     function onEnterClick(){
-      const url="http://dev-api.coala.services:8000/student-redis-Login?teacher_id="+teacherId+"&student_id="+userId
+      const url="http://dev-api.coala.services:8000/teacher-redis-Login?teacher_id="+userId
       fetch(url, {
           method: 'Get',
         })
@@ -89,7 +89,7 @@ function Login(){
             //window.location.replace("/next")
           }
           else{
-            alert(`선생님을 다시 선택해주세요`)
+            alert(`로그인 실패`)
           }     
         })
     }
@@ -110,7 +110,7 @@ function Login(){
           <select id="teacherSelectSet" onChange={onTeacherChange} >
             <option>선생님</option>
           </select>
-          <Link to="/next" state = {{teacherID: teacherId ,userID: userId,teacherName: teacherName}}>
+          <Link to="/next" state = {{userID: userId}}>
               <button onClick={onEnterClick} >접속하기</button>
           </Link>
             

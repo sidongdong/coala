@@ -11,6 +11,7 @@ import CodeMirror from '@uiw/react-codemirror';
 import { loadLanguage, langNames, langs } from '@uiw/codemirror-extensions-langs';
 import { createTheme } from '@uiw/codemirror-themes';
 import { tags as t } from '@lezer/highlight';
+import {vscodeDark} from '@uiw/codemirror-theme-vscode';
 //import { io } from "socket.io-client";
 
 
@@ -516,7 +517,7 @@ function Home(){
         >
           <h3>피드백</h3>
           <CodeMirror
-            theme={myTheme}
+            theme={vscodeDark}
             value={feedbackCode}
             readOnly="readonly"
             padding={15}
@@ -622,7 +623,7 @@ function Home(){
           <h3>{savedMemo}</h3>
           <div id="SavedCodeText">
             <CodeMirror
-              theme={myTheme}
+              theme={vscodeDark}
               value={savedCode}
               readOnly="readonly"
               padding={15}
@@ -661,7 +662,7 @@ function Home(){
                 <img src="assets/imgs/helpButton.png" alt="" onClick={onHelpClick} style={{width: 29, height: 33, marginRight:17, position:"relative", top:12,}}/>
                 <img src="assets/imgs/level.png" alt="" onClick={onLevelClick} style={{width: 80, height: 33, marginRight:13, position:"relative", top:10,}}/>
                 <select id="problemNumSelectSet1" defaultValue="" style={{width: 80, height: 31.5, marginLeft:8, marginRight:5, borderRadius:5, borderBlockColor: "rgb(204, 202, 202)", position:"relative", top:-2 }} onChange={onNumSet1Change}>
-                <option value="" disabled>문제선택</option>
+                <option disabled>문제선택</option>
                 {selectProbleRangeList.map((item) => (
                   <option value={item} key={item}>
                     {item}
@@ -707,7 +708,7 @@ function Home(){
                       id="solution"
                       value={code}
                       extensions={[loadLanguage(language)]}
-                      theme={myTheme}
+                      theme={vscodeDark}
                       placeholder="코딩"
                       style={{fontSize:editorFontSize, padding:10,}}
                       onChange={onCodeChange}
